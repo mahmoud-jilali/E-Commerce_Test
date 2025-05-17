@@ -25,9 +25,6 @@ class ProduitController extends AbstractController
                 'id' => $prod->getId(),
                 'categorie' => $prod->getCategorie()->getNom(),
                 'nom' => $prod->getNom(),
-                'image1' => base64_encode($prod->getImage1()),
-                'image2' => base64_encode($prod->getImage2()),
-                'image3' => base64_encode($prod->getImage3()),
                 'quantite' => $prod->getQuantite(),
                 'prix' => $prod->getPrix(),
                 'description' => $prod->getDescription(),
@@ -49,9 +46,6 @@ class ProduitController extends AbstractController
             'id' => $produit->getId(),
             'categorie' => $produit->getCategorie()->getNom(),
             'nom' => $produit->getNom(),
-            'image1' => base64_encode($produit->getImage1()),
-            'image2' => base64_encode($produit->getImage2()),
-            'image3' => base64_encode($produit->getImage3()),
             'quantite' => $produit->getQuantite(),
             'prix' => $produit->getPrix(),
             'description' => $produit->getDescription(),
@@ -64,17 +58,15 @@ class ProduitController extends AbstractController
         $request = json_decode($request->getContent(), true);
 
         $produit = new Produit();
-        $categorie = $entityManger->getRepository(Categorie::class)->find($request['categorie']);
+        $categorieNom = $request['categorie'];
+        $categorie = $entityManger->getRepository(Categorie::class)->findOneBy(['nom' => $categorieNom]);
 
         if (!$categorie) {
-            return $this->json("Le catégorie " . $request['categorie'] . " n'existe pas", 404);
+            return $this->json("Le catégorie " . $categorieNom . " n'existe pas", 404);
         }
 
         $produit->setCategorie($categorie);
         $produit->setNom($request['nom']);
-        $produit->setImage1(base64_decode($request['image1']));
-        $produit->setImage2(base64_decode($request['image2']));
-        $produit->setImage3(base64_decode($request['image3']));
         $produit->setQuantite($request['quantite']);
         $produit->setPrix($request['prix']);
         $produit->setDescription($request['description']);
@@ -82,11 +74,8 @@ class ProduitController extends AbstractController
         $entityManger->flush();
 
         return $this->json([
-            'categorie' => $produit->getCategorie()->getNom(),
+            'categorie' => $categorie->getNom(),
             'nom' => $produit->getNom(),
-            'image1' => base64_encode($produit->getImage1()),
-            'image2' => base64_encode($produit->getImage2()),
-            'image3' => base64_encode($produit->getImage3()),
             'quantite' => $produit->getQuantite(),
             'prix' => $produit->getPrix(),
             'description' => $produit->getDescription(),
@@ -99,23 +88,21 @@ class ProduitController extends AbstractController
         $request = json_decode($request->getContent(), true);
 
         $produit = $entityManager->getRepository(Produit::class)->find($id);
+        $categorieNom = $request['categorie'];
         if (!$produit) {
             return $this->json('Aucun produit trouvé', Response::HTTP_NOT_FOUND);
         }
 
         if (isset($request['categorie'])) {
-            $categorie = $entityManager->getRepository(Categorie::class)->find($request['categorie']);
+            $categorie = $entityManager->getRepository(Categorie::class)->findOneBy(['nom' => $categorieNom]);
             if (!$categorie) {
-                return $this->json("La catégorie " . $request['categorie'] . " n'existe pas", Response::HTTP_NOT_FOUND);
+                return $this->json("La catégorie " . $categorieNom . " n'existe pas", Response::HTTP_NOT_FOUND);
             }
             $produit->setCategorie($categorie);
         }
 
         if (isset($request['nom'])) $produit->setNom($request['nom']);
         if (isset($request['description'])) $produit->setDescription($request['description']);
-        if (isset($request['image1'])) $produit->setImage1(base64_decode($request['image1']));
-        if (isset($request['image2'])) $produit->setImage2(base64_decode($request['image2']));
-        if (isset($request['image3'])) $produit->setImage3(base64_decode($request['image3']));
         if (isset($request['quantite'])) $produit->setQuantite($request['quantite']);
         if (isset($request['prix'])) $produit->setPrix($request['prix']);
 
@@ -123,12 +110,8 @@ class ProduitController extends AbstractController
         
         return $this->json([
             'id' => $produit->getId(),
-            'categorie' => $produit->getCategorie()->getNom(),
+            'categorie' => $categorie->getNom(),
             'nom' => $produit->getNom(),
-            'image1' => base64_encode($produit->getImage1()),
-            'image2' => base64_encode($produit->getImage2()),
-            'image3' => base64_encode($produit->getImage3()),
-            'quantite' => $produit->getQuantite(),
             'prix' => $produit->getPrix(),
             'description' => $produit->getDescription(),
         ], Response::HTTP_OK);

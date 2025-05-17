@@ -22,15 +22,6 @@ class Produit
     #[ORM\Column(length: 150)]
     private ?string $nom = null;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $image1;
-
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $image2;
-
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $image3;
-
     #[ORM\Column]
     private ?int $quantite = null;
 
@@ -83,42 +74,6 @@ class Produit
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getImage1()
-    {
-        return $this->image1;
-    }
-
-    public function setImage1($image1): static
-    {
-        $this->image1 = $image1;
-
-        return $this;
-    }
-
-    public function getImage2()
-    {
-        return $this->image2;
-    }
-
-    public function setImage2($image2): static
-    {
-        $this->image2 = $image2;
-
-        return $this;
-    }
-
-    public function getImage3()
-    {
-        return $this->image3;
-    }
-
-    public function setImage3($image3): static
-    {
-        $this->image3 = $image3;
 
         return $this;
     }
